@@ -1,0 +1,16 @@
+# Diagramme de séquence – Gestion d'un arrêt aux stands
+
+```mermaid
+sequenceDiagram
+    participant UI
+    participant Controller
+    participant Service
+    participant Model
+
+    UI->>Controller: demande arrêt au stand (pilote, type pneus)
+    Controller->>Service: effectuerArretStand(pilote, type pneus)
+    Service->>Model: Course.effectuerArretStand(pilote, type pneus)
+    Model-->>Service: Arret effectué (chrono mis à jour, pneus changés)
+    Service-->>Controller: Confirmation
+    Controller-->>UI: Rafraîchir affichage
+```
