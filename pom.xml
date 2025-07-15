@@ -51,6 +51,20 @@
             <version>21</version>
         </dependency>
         
+        <!-- MySQL Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+        
+        <!-- HikariCP pour le pool de connexions -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+        
         <!-- Gson pour la sérialisation JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

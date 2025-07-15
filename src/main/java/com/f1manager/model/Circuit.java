@@ -1,23 +1,24 @@
 package com.f1manager.model;
 
 public class Circuit {
+    private int id; // ID de la base de données
     private String nom;
     private int nombreTours;
-    private int dureeParTour; // Durée en secondes
+    private int tempsMoyenParTour; // Temps moyen en secondes
 
     // Constructeurs
     public Circuit() {
     }
 
-    public Circuit(String nom, int nombreTours, int dureeParTour) {
+    public Circuit(String nom, int nombreTours, int tempsMoyenParTour) {
         this.nom = nom;
         this.nombreTours = nombreTours;
-        this.dureeParTour = dureeParTour;
+        this.tempsMoyenParTour = tempsMoyenParTour;
     }
 
     // Méthodes utilitaires
     public int getDureeTotaleEstimee() {
-        return nombreTours * dureeParTour;
+        return nombreTours * tempsMoyenParTour;
     }
 
     public String getDureeTotaleFormatee() {
@@ -33,18 +34,26 @@ public class Circuit {
         }
     }
 
-    public String getDureeParTourFormatee() {
-        int minutes = dureeParTour / 60;
-        int secondes = dureeParTour % 60;
+    public String getTempsMoyenFormate() {
+        int minutes = tempsMoyenParTour / 60;
+        int secondes = tempsMoyenParTour % 60;
         return String.format("%dm %02ds", minutes, secondes);
     }
 
     public boolean isValide() {
         return nom != null && !nom.trim().isEmpty() &&
-                nombreTours > 0 && dureeParTour > 0;
+                nombreTours > 0 && tempsMoyenParTour > 0;
     }
 
     // Getters et Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNom() {
         return nom;
     }
@@ -61,17 +70,30 @@ public class Circuit {
         this.nombreTours = nombreTours;
     }
 
+    public int getTempsMoyenParTour() {
+        return tempsMoyenParTour;
+    }
+
+    public void setTempsMoyenParTour(int tempsMoyenParTour) {
+        this.tempsMoyenParTour = tempsMoyenParTour;
+    }
+
+    // Méthodes de compatibilité avec l'ancien code
     public int getDureeParTour() {
-        return dureeParTour;
+        return tempsMoyenParTour;
     }
 
     public void setDureeParTour(int dureeParTour) {
-        this.dureeParTour = dureeParTour;
+        this.tempsMoyenParTour = dureeParTour;
+    }
+
+    public String getDureeParTourFormatee() {
+        return getTempsMoyenFormate();
     }
 
     @Override
     public String toString() {
         return String.format("Circuit: %s - %d tours - %s par tour (Total: %s)",
-                nom, nombreTours, getDureeParTourFormatee(), getDureeTotaleFormatee());
+                nom, nombreTours, getTempsMoyenFormate(), getDureeTotaleFormatee());
     }
 }

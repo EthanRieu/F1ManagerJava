@@ -986,8 +986,8 @@ public class ApplicationController {
         if (courseService != null && courseService.getCourseActuelle() != null) {
             return courseService.getCourseActuelle().getPilotes();
         }
-        // Sinon, retourner la liste générale
-        return piloteService.getPilotesList();
+        // Sinon, retourner tous les pilotes de la base de données
+        return piloteService.obtenirTousLesPilotes();
     }
 
     // Méthode de debug pour afficher les données pilotes à chaque fin de tour

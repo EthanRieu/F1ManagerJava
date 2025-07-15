@@ -1,12 +1,17 @@
 package com.f1manager.model;
 
 public class Pilote {
+    // Champs de base de données
+    private int id; // ID de la base de données
+    private int numero;
     private String nom;
     private String prenom;
-    private int numero;
+
+    // Champs pour la simulation (non persistés)
     private boolean enPiste;
     private VoitureF1 voiture;
     private boolean abandonne;
+    private String statut = "garage"; // garage, piste, abandonne
     private double tempsTotal = 0;
     private double tempsTourEnCours = 0;
     private double meilleurTour = Double.MAX_VALUE;
@@ -16,6 +21,7 @@ public class Pilote {
 
     // Constructeurs
     public Pilote() {
+        this.statut = "garage";
     }
 
     public Pilote(String nom, String prenom, int numero) {
@@ -24,12 +30,14 @@ public class Pilote {
         this.numero = numero;
         this.enPiste = false;
         this.abandonne = false;
+        this.statut = "garage";
     }
 
     // Méthodes de gestion
     public void sortirDesStands() {
         if (!enPiste && !abandonne) {
             this.enPiste = true;
+            this.statut = "piste";
             if (voiture != null) {
                 voiture.setStatut("circuit");
             }
@@ -39,6 +47,7 @@ public class Pilote {
     public void rentrerAuxStands() {
         if (enPiste && !abandonne) {
             this.enPiste = false;
+            this.statut = "garage";
             if (voiture != null) {
                 voiture.setStatut("stands");
             }
@@ -48,6 +57,7 @@ public class Pilote {
     public void abandonner() {
         this.abandonne = true;
         this.enPiste = false;
+        this.statut = "abandonne";
         if (voiture != null) {
             voiture.setStatut("garage");
             voiture.setAbandonne(true);
@@ -55,6 +65,22 @@ public class Pilote {
     }
 
     // Getters et Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
     public String getNom() {
         return nom;
     }
@@ -69,14 +95,6 @@ public class Pilote {
 
     public void setPrenom(String prenom) {
         this.prenom = prenom;
-    }
-
-    public int getNumero() {
-        return numero;
-    }
-
-    public void setNumero(int numero) {
-        this.numero = numero;
     }
 
     public boolean isEnPiste() {
@@ -103,17 +121,22 @@ public class Pilote {
         this.abandonne = abandonne;
     }
 
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+        // Synchroniser avec les anciens champs
+        this.enPiste = "piste".equals(statut);
+        this.abandonne = "abandonne".equals(statut);
+    }
+
     public String getNomComplet() {
         return prenom + " " + nom;
     }
 
-    @Override
-    public String toString() {
-        return String.format("#%d - %s %s (%s)",
-                numero, prenom, nom,
-                abandonne ? "Abandonné" : (enPiste ? "En piste" : "Aux stands"));
-    }
-
+    // Getters et setters pour la simulation
     public double getTempsTotal() {
         return tempsTotal;
     }
@@ -160,5 +183,12 @@ public class Pilote {
 
     public void setMeilleurTourNum(int meilleurTourNum) {
         this.meilleurTourNum = meilleurTourNum;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("#%d - %s %s (%s)",
+                numero, prenom, nom,
+                abandonne ? "Abandonné" : (enPiste ? "En piste" : "Aux stands"));
     }
 }

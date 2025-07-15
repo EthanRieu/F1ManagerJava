@@ -1,6 +1,7 @@
 package com.f1manager.model;
 
 public class VoitureF1 {
+    private int id; // ID de la base de données
     private String numero;
     private Pilote pilote;
     private String typePneus;
@@ -95,6 +96,14 @@ public class VoitureF1 {
     }
 
     // Getters et Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNumero() {
         return numero;
     }

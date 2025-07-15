@@ -142,17 +142,45 @@ public class CourseMenu {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        // Champs de saisie
-        TextField nomCircuitField = new TextField();
-        TextField nbToursField = new TextField();
-        TextField dureeTourField = new TextField();
+        // ComboBox pour sélectionner le circuit
+        ComboBox<com.f1manager.model.Circuit> circuitCombo = new ComboBox<>();
+        circuitCombo.setPromptText("Sélectionner un circuit");
 
-        grid.add(new Label("Nom du Circuit:"), 0, 0);
-        grid.add(nomCircuitField, 1, 0);
-        grid.add(new Label("Nombre de Tours:"), 0, 1);
-        grid.add(nbToursField, 1, 1);
-        grid.add(new Label("Durée par Tour (secondes):"), 0, 2);
-        grid.add(dureeTourField, 1, 2);
+        // Charger les circuits depuis la base de données
+        try {
+            com.f1manager.service.CircuitService circuitService = new com.f1manager.service.CircuitService();
+            circuitCombo.getItems().addAll(circuitService.obtenirTousLesCircuits());
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement des circuits : " + e.getMessage());
+        }
+
+        // Personnaliser l'affichage des circuits dans la ComboBox
+        circuitCombo.setCellFactory(param -> new javafx.scene.control.ListCell<com.f1manager.model.Circuit>() {
+            @Override
+            protected void updateItem(com.f1manager.model.Circuit circuit, boolean empty) {
+                super.updateItem(circuit, empty);
+                if (empty || circuit == null) {
+                    setText(null);
+                } else {
+                    setText(circuit.getNom() + " (" + circuit.getNombreTours() + " tours)");
+                }
+            }
+        });
+
+        circuitCombo.setButtonCell(new javafx.scene.control.ListCell<com.f1manager.model.Circuit>() {
+            @Override
+            protected void updateItem(com.f1manager.model.Circuit circuit, boolean empty) {
+                super.updateItem(circuit, empty);
+                if (empty || circuit == null) {
+                    setText(null);
+                } else {
+                    setText(circuit.getNom() + " (" + circuit.getNombreTours() + " tours)");
+                }
+            }
+        });
+
+        grid.add(new Label("Circuit:"), 0, 0);
+        grid.add(circuitCombo, 1, 0);
 
         // Boutons
         Button validerBtn = new Button("Valider");
@@ -160,9 +188,16 @@ public class CourseMenu {
 
         validerBtn.setOnAction(e -> {
             try {
-                String nomCircuit = nomCircuitField.getText();
-                int nbTours = Integer.parseInt(nbToursField.getText());
-                int dureeTour = Integer.parseInt(dureeTourField.getText());
+                com.f1manager.model.Circuit circuitSelectionne = circuitCombo.getValue();
+                if (circuitSelectionne == null) {
+                    showError("Veuillez sélectionner un circuit");
+                    return;
+                }
+
+                String nomCircuit = circuitSelectionne.getNom();
+                int nbTours = circuitSelectionne.getNombreTours();
+                int dureeTour = circuitSelectionne.getTempsMoyenParTour();
+
                 java.util.List<com.f1manager.model.Pilote> pilotesSansVoiture = new java.util.ArrayList<>();
                 boolean success = controller.demarrerCourse(nomCircuit, nbTours, dureeTour, pilotesSansVoiture);
                 if (success) {
@@ -179,17 +214,15 @@ public class CourseMenu {
                 } else {
                     showError("Impossible de démarrer la course");
                 }
-            } catch (NumberFormatException ex) {
-                showError("Les champs nombre de tours et durée par tour doivent être des nombres entiers");
             } catch (Exception ex) {
-                showError(ex.getMessage());
+                showError("Erreur : " + ex.getMessage());
             }
         });
 
         annulerBtn.setOnAction(e -> dialog.close());
 
         HBox buttons = new HBox(10, validerBtn, annulerBtn);
-        grid.add(buttons, 1, 3);
+        grid.add(buttons, 1, 1);
 
         Scene scene = new Scene(grid);
         dialog.setScene(scene);
