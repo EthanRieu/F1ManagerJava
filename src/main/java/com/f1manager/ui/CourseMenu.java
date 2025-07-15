@@ -347,7 +347,20 @@ public class CourseMenu {
                 cellData -> new SimpleIntegerProperty(cellData.getValue().getToursEffectues()).asObject());
         TableColumn<Pilote, String> chronoTotalCol = new TableColumn<>("Chrono total (s)");
         chronoTotalCol.setCellValueFactory(
-                cellData -> new SimpleStringProperty(String.format("%.1f", cellData.getValue().getTempsTotal())));
+                cellData -> {
+                    Pilote p = cellData.getValue();
+                    // Calculer le temps total réel incluant le tour en cours
+                    double tempsReel = p.getTempsTotal() + p.getTempsTourEnCours();
+                    return new SimpleStringProperty(String.format("%.1f", tempsReel));
+                });
+
+        TableColumn<Pilote, String> tempsTourEnCoursCol = new TableColumn<>("Tour en cours (s)");
+        tempsTourEnCoursCol.setCellValueFactory(
+                cellData -> {
+                    double tempsTour = cellData.getValue().getTempsTourEnCours();
+                    return new SimpleStringProperty(tempsTour > 0 ? String.format("%.1f", tempsTour) : "-");
+                });
+
         TableColumn<Pilote, String> dernierTourCol = new TableColumn<>("Dernier tour (s)");
         dernierTourCol.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getDernierTour() == Double.MAX_VALUE ? "-"
@@ -374,7 +387,8 @@ public class CourseMenu {
             return new SimpleStringProperty(statut);
         });
 
-        table.getColumns().addAll(positionCol, numeroCol, nomCol, prenomCol, toursCol, chronoTotalCol, dernierTourCol,
+        table.getColumns().addAll(positionCol, numeroCol, nomCol, prenomCol, toursCol, chronoTotalCol,
+                tempsTourEnCoursCol, dernierTourCol,
                 meilleurTourCol,
                 pneusCol, statutCol);
         table.setItems(FXCollections.observableArrayList(controller.getPilotesList()));
@@ -385,10 +399,21 @@ public class CourseMenu {
         actionButtons.setPadding(new Insets(10, 0, 0, 0));
         Button arretStandBtn = new Button("Arrêt au stand");
         Button abandonBtn = new Button("Abandon");
+        Button fermerBtn = new Button("Fermer");
         arretStandBtn.setDisable(true);
         abandonBtn.setDisable(true);
-        actionButtons.getChildren().addAll(arretStandBtn, abandonBtn);
+        fermerBtn.setDisable(true); // Désactivé pendant la course
+        fermerBtn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        actionButtons.getChildren().addAll(arretStandBtn, abandonBtn, fermerBtn);
         root.getChildren().add(actionButtons);
+
+        // Action du bouton fermer
+        fermerBtn.setOnAction(e -> {
+            if (trackingTimeline != null)
+                trackingTimeline.stop();
+            controller.arreterSimulationCourse();
+            trackingStage.close();
+        });
 
         // Gestion de la sélection dans le tableau
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
@@ -462,22 +487,51 @@ public class CourseMenu {
         controller.demarrerSimulationCourse();
 
         // Rafraîchissement automatique de l'affichage
-        trackingTimeline = new Timeline(new KeyFrame(Duration.millis(100), ev -> {
+        trackingTimeline = new Timeline(new KeyFrame(Duration.millis(50), ev -> { // Plus fréquent pour un meilleur
+                                                                                  // temps réel
             // Chrono global
             double chrono = controller.getChronoGlobalCourse();
             chronoLabel.setText(String.format("Chrono : %.1fs", chrono));
+
             // Tours parcourus (max des pilotes)
-            int maxTours = controller.getPilotesList().stream().mapToInt(Pilote::getToursEffectues).max().orElse(0);
-            toursLabel.setText("Tours parcourus : " + maxTours + " / " + nbTours);
-            // Classement dynamique
             var pilotes = controller.getPilotesList();
+            int maxTours = pilotes.stream().mapToInt(Pilote::getToursEffectues).max().orElse(0);
+            toursLabel.setText("Tours parcourus : " + maxTours + " / " + nbTours);
+
+            // Classement dynamique en temps réel basé sur le temps total + temps tour en
+            // cours
             pilotes.sort((p1, p2) -> {
-                if (p2.getToursEffectues() != p1.getToursEffectues())
+                // Calculer le temps total réel incluant le tour en cours
+                double tempsReel1 = p1.getTempsTotal() + p1.getTempsTourEnCours();
+                double tempsReel2 = p2.getTempsTotal() + p2.getTempsTourEnCours();
+
+                // Priorité au nombre de tours effectués
+                if (p2.getToursEffectues() != p1.getToursEffectues()) {
                     return Integer.compare(p2.getToursEffectues(), p1.getToursEffectues());
-                return Double.compare(p1.getTempsTotal(), p2.getTempsTotal());
+                }
+
+                // Ensuite par temps total (incluant le tour en cours)
+                return Double.compare(tempsReel1, tempsReel2);
             });
+
+            // Mettre à jour le tableau
             table.setItems(FXCollections.observableArrayList(pilotes));
-            table.refresh(); // Forcer le rafraîchissement
+            table.refresh();
+
+            // Vérifier si la course est terminée
+            boolean courseTerminee = maxTours >= nbTours;
+            if (courseTerminee) {
+                // Activer le bouton fermer
+                fermerBtn.setDisable(false);
+                // Désactiver les boutons d'action de course
+                arretStandBtn.setDisable(true);
+                abandonBtn.setDisable(true);
+                // Changer le titre pour indiquer la fin
+                if (!titre.getText().contains("TERMINÉE")) {
+                    titre.setText("Suivi de la Course - TERMINÉE");
+                    titre.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4CAF50;");
+                }
+            }
         }));
         trackingTimeline.setCycleCount(Timeline.INDEFINITE);
         trackingTimeline.play();
