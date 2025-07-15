@@ -102,11 +102,6 @@ public class ApplicationController {
             result.append(pilote.toString()).append("\n");
         }
 
-        result.append("\nStatistiques:\n");
-        result.append("- Total: ").append(piloteService.getNombreTotalPilotes()).append("\n");
-        result.append("- En piste: ").append(piloteService.getNombrePilotesEnPiste()).append("\n");
-        result.append("- Disponibles: ").append(piloteService.getNombrePilotesDisponibles()).append("\n");
-
         return result.toString();
     }
 
@@ -355,11 +350,6 @@ public class ApplicationController {
         for (Pilote pilote : pilotes) {
             System.out.println(pilote.toString());
         }
-
-        System.out.println("\nStatistiques:");
-        System.out.println("- Total: " + piloteService.getNombreTotalPilotes());
-        System.out.println("- En piste: " + piloteService.getNombrePilotesEnPiste());
-        System.out.println("- Disponibles: " + piloteService.getNombrePilotesDisponibles());
     }
 
     private void faireSortirPilote() {

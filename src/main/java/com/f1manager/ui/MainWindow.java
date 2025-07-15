@@ -42,10 +42,9 @@ public class MainWindow extends Application {
         Button pilotesBtn = createMenuButton("Gestion des Pilotes", this::showPilotesMenu);
         Button courseBtn = createMenuButton("Gestion de la Course", this::showCourseMenu);
         Button voituresBtn = createMenuButton("Gestion des Voitures", this::showVoituresMenu);
-        Button statistiquesBtn = createMenuButton("Statistiques", this::showStatistiquesMenu);
         Button quitterBtn = createMenuButton("Quitter", () -> System.exit(0));
 
-        menu.getChildren().addAll(pilotesBtn, courseBtn, voituresBtn, statistiquesBtn, quitterBtn);
+        menu.getChildren().addAll(pilotesBtn, courseBtn, voituresBtn, quitterBtn);
         return menu;
     }
 
@@ -70,11 +69,6 @@ public class MainWindow extends Application {
     private void showVoituresMenu() {
         VoituresMenu voituresMenu = new VoituresMenu(controller, primaryStage);
         voituresMenu.show();
-    }
-
-    private void showStatistiquesMenu() {
-        StatistiquesMenu statistiquesMenu = new StatistiquesMenu(controller, primaryStage);
-        statistiquesMenu.show();
     }
 
     public static void main(String[] args) {

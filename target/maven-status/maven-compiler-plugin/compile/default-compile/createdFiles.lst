@@ -8,7 +8,6 @@ com/f1manager/database/DatabaseConnection.class
 com/f1manager/ui/PilotesMenu.class
 com/f1manager/TestConnexionDB.class
 com/f1manager/service/CircuitService.class
-com/f1manager/ui/StatistiquesMenu.class
 com/f1manager/ui/CourseMenu$2.class
 com/f1manager/DataManager$CourseData.class
 com/f1manager/DataManager.class
