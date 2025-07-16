@@ -1,16 +1,12 @@
 com/f1manager/util/Utils.class
-com/f1manager/util/LocalDateTimeAdapter.class
 com/f1manager/ui/MainWindow.class
 com/f1manager/model/Course.class
 com/f1manager/database/dao/CircuitDAO.class
 com/f1manager/database/dao/PiloteDAO.class
 com/f1manager/database/DatabaseConnection.class
 com/f1manager/ui/PilotesMenu.class
-com/f1manager/TestConnexionDB.class
 com/f1manager/service/CircuitService.class
 com/f1manager/ui/CourseMenu$2.class
-com/f1manager/DataManager$CourseData.class
-com/f1manager/DataManager.class
 com/f1manager/util/Constants.class
 com/f1manager/model/ArretAuxStands.class
 com/f1manager/Main.class
@@ -28,7 +24,5 @@ com/f1manager/model/VoitureF1.class
 com/f1manager/service/PiloteService.class
 com/f1manager/model/Pilote.class
 com/f1manager/ui/CourseMenu$1.class
-com/f1manager/util/Logger.class
 com/f1manager/model/Course$1.class
 com/f1manager/controller/ApplicationController.class
-com/f1manager/TestConnexionSimple.class

@@ -1,12 +1,62 @@
 flowchart TD
-    A[Création de la course] --> B[Ajout des pilotes et voitures]
-    B --> C[Configuration du circuit]
-    C --> D[Démarrage de la course]
-    D --> E[Simulation des tours]
-    E --> F{Arrêt au stand ?}
-    F -- Oui --> G[Gestion arrêt au stand]
-    F -- Non --> H[Tour suivant]
-    G --> H
-    H --> I{Course terminée ?}
-    I -- Non --> E
-    I -- Oui --> J[Affichage des résultats] 
+    A[Lancement MainWindow] --> B[Menu Principal]
+    B --> C[Gestion des Pilotes]
+    B --> D[Gestion des Voitures]
+    B --> E[Gestion de la Course]
+    
+    C --> C1[Ajouter Pilote]
+    C --> C2[Modifier Pilote]
+    C --> C3[Supprimer Pilote]
+    C1 --> C4[Dialogue Saisie]
+    C2 --> C4
+    C3 --> C5[Confirmation]
+    C4 --> C6[Validation + Sauvegarde]
+    C5 --> C6
+    C6 --> C7[Rafraîchissement Tableau]
+    
+    D --> D1[Assigner Pilote à Voiture]
+    D --> D2[Gestion des Voitures]
+    D1 --> D3[Dialogue Assignation]
+    D2 --> D3
+    D3 --> D4[Mise à jour Base]
+    D4 --> D5[Rafraîchissement UI]
+    
+    E --> F[Démarrer une Course]
+    F --> G[Dialogue Configuration Circuit]
+    G --> H[Sélection Circuit + Validation]
+    H --> I{Pilotes sans voiture ?}
+    I -->|Oui| J[Erreur: Assigner voitures]
+    I -->|Non| K[Création Course]
+    J --> E
+    
+    K --> L[Ajout Pilotes à la Course]
+    L --> M[Démarrage Course]
+    M --> N[Vue Suivi Temps Réel]
+    
+    N --> O[Tableau Classement]
+    O --> P[Chrono Global]
+    O --> Q[Rafraîchissement Automatique]
+    
+    N --> R{Action Utilisateur}
+    R -->|Arrêt au Stand| S[Dialogue Changement Pneus]
+    R -->|Abandon| T[Confirmation Abandon]
+    R -->|Fermer| U[Arrêt Course]
+    
+    S --> V[Sélection Type Pneus]
+    V --> W[Traitement Arrêt]
+    W --> X[Mise à jour Chrono]
+    X --> Y[Retour Circuit]
+    Y --> O
+    
+    T --> Z[Abandon Pilote]
+    Z --> AA[Mise à jour Statut]
+    AA --> O
+    
+    U --> AB[Arrêt Simulation]
+    AB --> AC[Retour Menu Principal]
+    AC --> B
+    
+    O --> AD{Course Terminée ?}
+    AD -->|Non| R
+    AD -->|Oui| AE[Résultats Finaux]
+    AF --> B 

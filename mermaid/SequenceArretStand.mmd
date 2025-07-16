@@ -1,12 +1,39 @@
 sequenceDiagram
-    participant UI
-    participant Controller
-    participant Service
-    participant Model
+    participant User as Utilisateur
+    participant UI as CourseMenu
+    participant Dialog as ChangerPneusDialog
+    participant Controller as ApplicationController
+    participant Service as CourseService
+    participant Model as Course
+    participant Pilote as Pilote
+    participant Voiture as VoitureF1
 
-    UI->>Controller: demande arrêt au stand (pilote, type pneus)
-    Controller->>Service: effectuerArretStand(pilote, type pneus)
-    Service->>Model: Course.effectuerArretStand(pilote, type pneus)
-    Model-->>Service: Arret effectué (chrono mis à jour, pneus changés)
+    %% Processus d'arrêt au stand via l'interface graphique
+    User->>UI: Sélectionne pilote dans tableau
+    User->>UI: Clique "Arrêt au stand"
+    UI->>Dialog: Affiche dialogue changement pneus
+    Dialog->>User: Demande type de pneus (Soft/Medium/Hard)
+    User->>Dialog: Sélectionne type de pneus
+    User->>Dialog: Clique "Valider"
+    
+    Dialog->>UI: Récupère sélection pneus
+    UI->>Controller: changerPneus(numeroPilote, typePneus)
+    Controller->>Service: changerPneus(pilote, typePneus)
+    Service->>Model: effectuerArretAuxStands(pilote, typePneus)
+    
+    Model->>Voiture: rentrerAuxStands()
+    Voiture-->>Model: Statut = "stands"
+    Model->>Voiture: changerPneus(typePneus)
+    Voiture-->>Model: Pneus changés
+    Model->>Voiture: sortirDesStands()
+    Voiture-->>Model: Statut = "circuit"
+    
+    Model->>Pilote: setEnPiste(false) puis setEnPiste(true)
+    Model->>Model: Ajoute temps d'arrêt au chrono
+    
+    Model-->>Service: Arrêt effectué
     Service-->>Controller: Confirmation
-    Controller-->>UI: Rafraîchir affichage 
+    Controller-->>UI: Succès
+    UI->>UI: Affiche message succès
+    UI->>UI: Rafraîchit tableau des pilotes
+    Dialog->>Dialog: Ferme dialogue 

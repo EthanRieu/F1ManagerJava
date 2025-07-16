@@ -71,11 +71,9 @@ public class CourseMenu {
         buttonsBox.setPadding(new Insets(10, 0, 0, 0));
 
         Button demarrerBtn = createMenuButton("Démarrer une Course", this::showDemarrerCourseDialog);
-        Button arreterBtn = createMenuButton("Arrêter la Course", this::showArreterCourseDialog);
-        Button pneusBtn = createMenuButton("Changer les Pneus", this::showChangerPneusDialog);
         Button retourBtn = createMenuButton("Retour", () -> stage.close());
 
-        buttonsBox.getChildren().addAll(demarrerBtn, arreterBtn, pneusBtn, retourBtn);
+        buttonsBox.getChildren().addAll(demarrerBtn, retourBtn);
         menu.getChildren().add(buttonsBox);
 
         return menu;

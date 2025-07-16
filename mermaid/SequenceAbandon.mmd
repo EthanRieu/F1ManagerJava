@@ -1,0 +1,49 @@
+sequenceDiagram
+    participant User as Utilisateur
+    participant UI as CourseMenu
+    participant Alert as ConfirmationDialog
+    participant Controller as ApplicationController
+    participant Service as CourseService
+    participant Model as Course
+    participant Pilote as Pilote
+    participant Voiture as VoitureF1
+
+    %% Processus d'abandon d'un pilote via l'interface graphique
+    User->>UI: Sélectionne pilote dans tableau
+    User->>UI: Clique "Abandon"
+    UI->>Alert: Affiche dialogue confirmation
+    Alert->>User: "Êtes-vous sûr de vouloir faire abandonner ce pilote ?"
+    User->>Alert: Clique "OK"
+    
+    Alert->>UI: Confirmation reçue
+    UI->>Pilote: pilote.abandonner()
+    Pilote->>Pilote: setAbandonne(true)
+    Pilote->>Pilote: setEnPiste(false)
+    Pilote->>Pilote: setStatut("abandonne")
+    
+    Pilote->>Voiture: getVoiture()
+    Voiture->>Voiture: setStatut("garage")
+    Voiture->>Voiture: setAbandonne(true)
+    
+    Pilote-->>UI: Abandon effectué
+    UI->>UI: Affiche message "Le pilote a abandonné la course"
+    UI->>UI: Rafraîchit tableau des pilotes
+    UI->>UI: Met à jour les boutons (désactive pour pilote abandonné)
+    
+    %% Mise à jour du classement
+    UI->>UI: Recalcule positions dans le classement
+    UI->>UI: Affiche statut "Abandonné" dans le tableau
+    
+    %% Vérification fin de course
+    UI->>UI: Vérifie si tous les pilotes ont abandonné
+    alt Tous les pilotes ont abandonné
+        UI->>Controller: arreterCourse()
+        Controller->>Service: arreterCourse()
+        Service->>Model: terminerCourse()
+        Model-->>Service: Course terminée
+        Service-->>Controller: Confirmation
+        Controller-->>UI: Course terminée
+        UI->>UI: Affiche résultats finaux
+    else Autres pilotes continuent
+        UI->>UI: Continue la course normalement
+    end 

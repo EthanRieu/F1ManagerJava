@@ -73,7 +73,7 @@ public class PiloteService {
     }
 
     // Méthodes de recherche
-    public Pilote trouverPilote(int numero) {
+    public Pilote trouverPiloteParNumero(int numero) {
         Pilote pilote = piloteDAO.findByNumero(numero);
         if (pilote != null) {
             // Charger la voiture associée
@@ -97,14 +97,6 @@ public class PiloteService {
         }
 
         return pilotes;
-    }
-
-    // Méthode simplifiée pour les pilotes sans voiture (pas de table de liaison)
-    public List<Pilote> obtenirPilotesSansVoiture() {
-        List<Pilote> pilotes = obtenirTousLesPilotes();
-        return pilotes.stream()
-                .filter(p -> p.getVoiture() == null)
-                .collect(Collectors.toList());
     }
 
     // Méthodes de gestion du statut (version simplifiée - statut en mémoire
@@ -153,91 +145,21 @@ public class PiloteService {
         return true;
     }
 
-    public boolean abandonnerPilote(int numero) {
-        Pilote pilote = piloteDAO.findByNumero(numero);
-        if (pilote == null) {
-            System.out.println("❌ Pilote #" + numero + " non trouvé.");
-            return false;
-        }
-
-        if ("abandonne".equals(pilote.getStatut())) {
-            System.out.println("⚠️ Le pilote #" + numero + " a déjà abandonné.");
-            return false;
-        }
-
-        pilote.setStatut("abandonne");
-        System.out.println("🚫 Pilote #" + numero + " (" + pilote.getNom() + ") a abandonné la course.");
-        return true;
-    }
-
-    // Méthodes de statistiques
-    public int getNombrePilotes() {
-        return piloteDAO.findAll().size();
-    }
-
-    public int getNombrePilotesEnPiste() {
-        return (int) piloteDAO.findAll().stream()
-                .filter(p -> "piste".equals(p.getStatut()))
-                .count();
-    }
-
-    public int getNombrePilotesAuGarage() {
-        return (int) piloteDAO.findAll().stream()
-                .filter(p -> "garage".equals(p.getStatut()))
-                .count();
-    }
-
-    public int getNombrePilotesAbandonne() {
-        return (int) piloteDAO.findAll().stream()
-                .filter(p -> "abandonne".equals(p.getStatut()))
-                .count();
-    }
-
-    public List<Pilote> getPilotesEnPiste() {
-        return piloteDAO.findAll().stream()
-                .filter(p -> "piste".equals(p.getStatut()))
-                .collect(Collectors.toList());
-    }
-
-    public List<Pilote> getPilotesAuGarage() {
-        return piloteDAO.findAll().stream()
-                .filter(p -> "garage".equals(p.getStatut()))
-                .collect(Collectors.toList());
-    }
-
     // Méthodes utilitaires
     public boolean piloteExiste(int numero) {
         return piloteDAO.existsByNumero(numero);
     }
 
-    public String getStatutPilote(int numero) {
-        Pilote pilote = piloteDAO.findByNumero(numero);
-        return pilote != null ? pilote.getStatut() : "inexistant";
-    }
-
-    // Méthodes pour compatibilité avec l'ancien code
-    public Pilote trouverPiloteParNumero(int numero) {
-        return trouverPilote(numero);
-    }
-
-    public int getNombreTotalPilotes() {
-        return getNombrePilotes();
-    }
-
-    public int getNombrePilotesDisponibles() {
-        return getNombrePilotesAuGarage();
-    }
-
     public List<Pilote> obtenirPilotesDisponibles() {
-        return getPilotesAuGarage();
+        return piloteDAO.findAll().stream()
+                .filter(p -> "garage".equals(p.getStatut()))
+                .collect(Collectors.toList());
     }
 
     public List<Pilote> obtenirPilotesEnPiste() {
-        return getPilotesEnPiste();
-    }
-
-    public List<Pilote> getPilotesList() {
-        return obtenirTousLesPilotes();
+        return piloteDAO.findAll().stream()
+                .filter(p -> "piste".equals(p.getStatut()))
+                .collect(Collectors.toList());
     }
 
     public void reinitialiserTousLesPilotes() {
@@ -246,45 +168,5 @@ public class PiloteService {
             pilote.setStatut("garage");
         }
         System.out.println("🔄 Tous les pilotes ont été réinitialisés au garage.");
-    }
-
-    public void afficherTousLesPilotes() {
-        List<Pilote> pilotes = piloteDAO.findAll();
-
-        if (pilotes.isEmpty()) {
-            System.out.println("ℹ️ Aucun pilote enregistré.");
-            return;
-        }
-
-        System.out.println("\n📋 Liste des pilotes :");
-        System.out.println("─".repeat(60));
-        System.out.printf("%-4s %-15s %-15s %-15s%n",
-                "N°", "Nom", "Prénom", "Statut");
-        System.out.println("─".repeat(60));
-
-        for (Pilote pilote : pilotes) {
-            String statut = getStatutEmoji(pilote.getStatut());
-            System.out.printf("%-4d %-15s %-15s %-15s%n",
-                    pilote.getNumero(),
-                    pilote.getNom(),
-                    pilote.getPrenom(),
-                    statut);
-        }
-
-        System.out.println("─".repeat(60));
-        System.out.println("📊 Total : " + pilotes.size() + " pilotes");
-    }
-
-    private String getStatutEmoji(String statut) {
-        switch (statut) {
-            case "piste":
-                return "🏁 En piste";
-            case "garage":
-                return "🏠 Garage";
-            case "abandonne":
-                return "🚫 Abandonné";
-            default:
-                return "❓ " + statut;
-        }
     }
 }

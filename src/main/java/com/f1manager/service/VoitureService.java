@@ -103,17 +103,13 @@ public class VoitureService {
         return voitureDAO.findByPiloteId(pilote.getId());
     }
 
-    public List<VoitureF1> obtenirToutesLesVoitures() {
+    public List<VoitureF1> getVoituresList() {
         return voitureDAO.findAll();
     }
 
     // Méthodes utilitaires
     public boolean voitureExiste(String numero) {
         return voitureDAO.existsByNumero(numero);
-    }
-
-    public int getNombreVoitures() {
-        return voitureDAO.findAll().size();
     }
 
     public boolean assignerPilote(String numeroVoiture, Pilote pilote) {
@@ -129,37 +125,5 @@ public class VoitureService {
             System.out.println("❌ Erreur lors de l'assignation du pilote.");
             return false;
         }
-    }
-
-    public void afficherToutesLesVoitures() {
-        List<VoitureF1> voitures = voitureDAO.findAll();
-
-        if (voitures.isEmpty()) {
-            System.out.println("ℹ️ Aucune voiture enregistrée.");
-            return;
-        }
-
-        System.out.println("\n🏎️ Liste des voitures :");
-        System.out.println("─".repeat(80));
-        System.out.printf("%-15s %-20s %-15s %-15s%n",
-                "Numéro", "Pilote", "Statut", "Pneus");
-        System.out.println("─".repeat(80));
-
-        for (VoitureF1 voiture : voitures) {
-            String piloteNom = voiture.getPilote() != null ? voiture.getPilote().getNomComplet() : "Aucun";
-            System.out.printf("%-15s %-20s %-15s %-15s%n",
-                    voiture.getNumero(),
-                    piloteNom,
-                    voiture.getStatut(),
-                    voiture.getTypePneus());
-        }
-
-        System.out.println("─".repeat(80));
-        System.out.println("🏎️ Total : " + voitures.size() + " voitures");
-    }
-
-    // Méthodes pour compatibilité avec l'ancien code
-    public List<VoitureF1> getVoituresList() {
-        return obtenirToutesLesVoitures();
     }
 }

@@ -184,17 +184,7 @@ public class ApplicationController {
     }
 
     private String voirHistoriqueGUI() {
-        List<Course> courses = courseService.getHistoriqueCourses();
-        if (courses.isEmpty()) {
-            return "Aucune course dans l'historique.";
-        }
-
-        StringBuilder result = new StringBuilder();
-        result.append("=== Historique des Courses ===\n");
-        for (Course course : courses) {
-            result.append(course.toString()).append("\n");
-        }
-        return result.toString();
+        return "Historique des courses non disponible (fonctionnalité à implémenter).";
     }
 
     // Point d'entrée principal
@@ -631,11 +621,7 @@ public class ApplicationController {
                         }
                     }
                     case 5 -> {
-                        if (courseService.sauvegarderCourseActuelle()) {
-                            System.out.println("✅ Course sauvegardée !");
-                        } else {
-                            System.out.println("❌ Erreur lors de la sauvegarde.");
-                        }
+                        System.out.println("Sauvegarde manuelle non disponible (fonctionnalité à implémenter).");
                     }
                     case 6 -> retour = true;
                     default -> System.out.println("❌ Choix invalide.");
@@ -836,54 +822,7 @@ public class ApplicationController {
     // ===== HISTORIQUE =====
     private void voirHistorique() {
         System.out.println("=== HISTORIQUE DES COURSES ===");
-
-        List<Course> courses = courseService.chargerHistoriqueCourses();
-
-        if (courses.isEmpty()) {
-            System.out.println("Aucune course dans l'historique.");
-            return;
-        }
-
-        System.out.println("Courses enregistrées: " + courses.size());
-        for (int i = 0; i < courses.size(); i++) {
-            Course course = courses.get(i);
-            System.out.println((i + 1) + ". " + course.toString());
-        }
-
-        System.out.println("\n1. Voir Détails d'une Course");
-        System.out.println("2. Retour");
-
-        int choix = lireEntier("Votre choix: ");
-
-        if (choix == 1) {
-            int numeroCourse = lireEntier("Numéro de la course à voir: ");
-            if (numeroCourse > 0 && numeroCourse <= courses.size()) {
-                voirDetailsCourse(courses.get(numeroCourse - 1));
-            } else {
-                System.out.println("❌ Numéro de course invalide.");
-            }
-        }
-    }
-
-    private void voirDetailsCourse(Course course) {
-        System.out.println("\n=== DÉTAILS DE LA COURSE ===");
-        System.out.println("ID: " + course.getId());
-        System.out.println("Circuit: " + course.getCircuit().toString());
-        System.out.println("Statut: " + course.getStatutCourse());
-        System.out.println("Tours effectués: " + course.getTourActuel());
-
-        System.out.println("\nPilotes participants:");
-        course.getPilotes().forEach(p -> {
-            String statut = p.isAbandonne() ? " (Abandonné)" : " (Terminé)";
-            System.out.println("  - " + p.toString() + statut);
-        });
-
-        System.out.println("\nArrêts effectués:");
-        if (course.getArretsEffectues().isEmpty()) {
-            System.out.println("  Aucun arrêt");
-        } else {
-            course.getArretsEffectues().forEach(a -> System.out.println("  - " + a.toString()));
-        }
+        System.out.println("Fonctionnalité d'historique non disponible (à implémenter avec base de données).");
     }
 
     // ===== UTILITAIRES =====

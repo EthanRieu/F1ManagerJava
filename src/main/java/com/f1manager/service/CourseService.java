@@ -3,7 +3,6 @@ package com.f1manager.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.f1manager.DataManager;
 import com.f1manager.model.ArretAuxStands;
 import com.f1manager.model.Circuit;
 import com.f1manager.model.Course;
@@ -11,12 +10,10 @@ import com.f1manager.model.Pilote;
 
 public class CourseService {
     private Course courseActuelle;
-    private DataManager dataManager;
     private PiloteService piloteService;
 
     public CourseService(PiloteService piloteService) {
         this.piloteService = piloteService;
-        this.dataManager = new DataManager();
     }
 
     // Gestion de course
@@ -77,9 +74,7 @@ public class CourseService {
         }
 
         courseActuelle.terminerCourse();
-
-        // Sauvegarder automatiquement la course terminée
-        return dataManager.sauvegarderCourse(courseActuelle);
+        return true;
     }
 
     // Gestion des arrêts
@@ -136,22 +131,6 @@ public class CourseService {
         return courseActuelle.getArretsEffectues();
     }
 
-    // Persistance
-    public boolean sauvegarderCourseActuelle() {
-        if (courseActuelle == null) {
-            return false;
-        }
-        return dataManager.sauvegarderCourse(courseActuelle);
-    }
-
-    public List<Course> chargerHistoriqueCourses() {
-        return dataManager.chargerCourses();
-    }
-
-    public Course chargerCourse(String courseId) {
-        return dataManager.chargerCourse(courseId);
-    }
-
     // Reset
     public void reinitialiser() {
         this.courseActuelle = null;
@@ -169,10 +148,6 @@ public class CourseService {
 
     public void reinitialiserCourse() {
         this.courseActuelle = null;
-    }
-
-    public List<Course> getHistoriqueCourses() {
-        return dataManager.chargerCourses();
     }
 
     public boolean configurerCourse(Circuit circuit) {

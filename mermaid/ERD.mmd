@@ -1,33 +1,46 @@
 erDiagram
-    PILOTE ||--o{ COURSE : participe
-    PILOTE ||--o{ VOITUREF1 : conduit
-    COURSE ||--o{ ARRETAUXSTANDS : "a des"
-    COURSE }o--|| CIRCUIT : "se déroule sur"
-    VOITUREF1 ||--o{ ARRETAUXSTANDS : "utilisée lors de"
-    PILOTE ||--o{ ARRETAUXSTANDS : "effectue"
-
-    PILOTE {
+    %% Base de données réelle selon create_db.sql
+    
+    PILOTES ||--o| VOITURES : conduit
+    CIRCUITS ||--o{ COURSES : "utilisé dans"
+    
+    PILOTES {
+        int id PK
+        int numero UK "1-99"
+        string nom "VARCHAR(50)"
+        string prenom "VARCHAR(50)"
+    }
+    
+    VOITURES {
+        int id PK
+        string numero_voiture UK "VARCHAR(10)"
+        int pilote_id FK "NULL autorisé"
+    }
+    
+    CIRCUITS {
+        int id PK
+        string nom UK "VARCHAR(100)"
+        int nombre_tours "DEFAULT 50"
+        int temps_moyen_par_tour "DEFAULT 90 secondes"
+    }
+    
+    %% Note: Les données de course (temps, positions, arrêts) 
+    %% sont gérées en mémoire uniquement, pas persistées
+    COURSES {
+        string course_id "En mémoire seulement"
+        int circuit_id FK "Référence circuits"
+        boolean course_demarree "Runtime"
+        boolean course_terminee "Runtime"
+        double chrono_global "Runtime"
+        int tour_actuel "Runtime"
+    }
+    
+    %% Vue utile créée dans la DB
+    V_PILOTES_VOITURES {
+        int pilote_id
         int numero
         string nom
         string prenom
-        string statut
-    }
-    VOITUREF1 {
-        int numero
-        string modele
-        string equipe
-    }
-    COURSE {
-        string id
-        int tourActuel
-        bool courseTerminee
-    }
-    CIRCUIT {
-        string nom
-        double longueur
-    }
-    ARRETAUXSTANDS {
-        string typePneus
-        double duree
-        int tour
+        int voiture_id
+        string numero_voiture
     } 

@@ -1,38 +1,174 @@
 classDiagram
+    %% Couche UI (JavaFX)
+    class MainWindow {
+        -ApplicationController controller
+        -Stage primaryStage
+        +start(Stage)
+        +createMainMenu()
+        +showPilotesMenu()
+        +showCourseMenu()
+        +showVoituresMenu()
+    }
+    
+    class CourseMenu {
+        -ApplicationController controller
+        -Stage parentStage
+        -Stage stage
+        -ObservableList~Pilote~ classementList
+        -Timeline trackingTimeline
+        +show()
+        +createClassementTable()
+        +showCourseTrackingView()
+        +showChangerPneusDialog()
+    }
+    
+    class PilotesMenu {
+        -ApplicationController controller
+        -ObservableList~Pilote~ pilotesList
+        +show()
+        +createPilotesTable()
+        +showAjouterPiloteDialog()
+        +showModifierPiloteDialog()
+        +showSupprimerPiloteDialog()
+    }
+    
+    class VoituresMenu {
+        -ApplicationController controller
+        -ObservableList~VoitureF1~ voituresList
+        +show()
+        +createVoituresTable()
+        +showAssignerPiloteDialog()
+    }
+    
+    %% Couche Controller
+    class ApplicationController {
+        -PiloteService piloteService
+        -CourseService courseService
+        -VoitureService voitureService
+        -CircuitService circuitService
+        +demarrerCourse()
+        +changerPneus()
+        +getPilotesList()
+        +arreterCourse()
+        +demarrerSimulationCourse()
+        +arreterSimulationCourse()
+    }
+    
+    %% Couche Service
+    class PiloteService {
+        -PiloteDAO piloteDAO
+        -VoitureDAO voitureDAO
+        +ajouterPilote()
+        +modifierPilote()
+        +supprimerPilote()
+        +trouverPiloteParNumero()
+        +obtenirTousLesPilotes()
+    }
+    
+    class CourseService {
+        -Course courseActuelle
+        -PiloteService piloteService
+        +creerNouvelleCourse()
+        +ajouterPiloteACourse()
+        +demarrerCourse()
+        +changerPneus()
+        +arreterCourse()
+    }
+    
+    class VoitureService {
+        -VoitureDAO voitureDAO
+        +ajouterVoiture()
+        +modifierVoiture()
+        +supprimerVoiture()
+        +trouverVoiture()
+        +assignerPilote()
+        +getVoituresList()
+    }
+    
+    class CircuitService {
+        -CircuitDAO circuitDAO
+        +ajouterCircuit()
+        +modifierCircuit()
+        +supprimerCircuit()
+        +obtenirTousLesCircuits()
+    }
+    
+    %% Couche Model - Entités persistées en DB
     class Pilote {
-        int numero
-        String nom
-        String prenom
-        String statut
-        +VoitureF1 voiture
+        -int id
+        -int numero
+        -String nom
+        -String prenom
+        %% Champs simulation (en mémoire uniquement)
+        -boolean enPiste
+        -VoitureF1 voiture
+        -boolean abandonne
+        -String statut
+        -double tempsTotal
+        -double tempsTourEnCours
+        -double meilleurTour
+        -int toursEffectues
+        +sortirDesStands()
+        +rentrerAuxStands()
+        +abandonner()
     }
+    
     class VoitureF1 {
-        int numero
-        String modele
-        String equipe
+        -int id
+        -String numero
+        -Pilote pilote
+        %% Champs simulation (en mémoire uniquement)
+        -String typePneus
+        -String statut
+        -boolean abandonne
+        +changerPneus()
+        +rentrerAuGarage()
+        +sortirDesStands()
+        +rentrerAuxStands()
+        +sortirDuGarage()
     }
-    class Course {
-        String id
-        Circuit circuit
-        List~Pilote~ pilotes
-        List~VoitureF1~ voitures
-        int tourActuel
-        boolean courseTerminee
-        boolean courseDemarree
-        List~ArretAuxStands~ arretsEffectues
-    }
+    
     class Circuit {
-        String nom
-        double longueur
+        -int id
+        -String nom
+        -int nombreTours
+        -int tempsMoyenParTour
+        +isValide()
     }
-    class ArretAuxStands {
-        String typePneus
-        double duree
-        int tour
+    
+    %% Entités en mémoire uniquement (simulation)
+    class Course {
+        -String id
+        -Circuit circuit
+        -List~Pilote~ pilotes
+        -List~VoitureF1~ voitures
+        -int tourActuel
+        -boolean courseTerminee
+        -boolean courseDemarree
+        -Timer timer
+        -double chronoGlobal
+        +demarrerCourse()
+        +terminerCourse()
+        +ajouterPilote()
+        +supprimerPilote()
     }
-    Pilote --> VoitureF1 : conduit
-    Pilote --> Course : participe
-    Course --> Circuit : "se déroule sur"
-    Course --> ArretAuxStands : "a des"
-    Pilote --> ArretAuxStands : "effectue"
-    VoitureF1 --> ArretAuxStands : "utilisée lors de" 
+    
+    %% Relations
+    MainWindow --> ApplicationController
+    CourseMenu --> ApplicationController
+    PilotesMenu --> ApplicationController
+    VoituresMenu --> ApplicationController
+    
+    ApplicationController --> PiloteService
+    ApplicationController --> CourseService
+    ApplicationController --> VoitureService
+    ApplicationController --> CircuitService
+    
+    CourseService --> Course
+    CourseService --> PiloteService
+    
+    Course --> Circuit
+    Course --> Pilote
+    Course --> VoitureF1
+    
+    Pilote --> VoitureF1 

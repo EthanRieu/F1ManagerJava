@@ -1,0 +1,94 @@
+flowchart TD
+    %% Architecture en Couches - Gestionnaire F1
+    
+    subgraph "🖥️ COUCHE PRESENTATION (JavaFX)"
+        UI1[MainWindow<br/>Point d'entrée principal]
+        UI2[PilotesMenu<br/>Gestion CRUD Pilotes]
+        UI3[VoituresMenu<br/>Gestion CRUD Voitures]
+        UI4[CourseMenu<br/>Gestion Course + Suivi Temps Réel]
+        
+        subgraph "Dialogues"
+            D1[DemarrerCourseDialog]
+            D2[ChangerPneusDialog]
+            D3[AjouterPiloteDialog]
+        end
+    end
+    
+    subgraph "🎮 COUCHE CONTRÔLEUR"
+        CTRL[ApplicationController<br/>Orchestration générale]
+    end
+    
+    subgraph "⚙️ COUCHE SERVICE (Logique Métier)"
+        S1[PiloteService<br/>Gestion des Pilotes]
+        S2[VoitureService<br/>Gestion des Voitures]
+        S3[CourseService<br/>Gestion des Courses]
+        S4[CircuitService<br/>Gestion des Circuits]
+    end
+    
+    subgraph "📊 COUCHE MODÈLE"
+        subgraph "Entités DB"
+            M1[Pilote<br/>id, numero, nom, prenom]
+            M2[VoitureF1<br/>id, numero_voiture, pilote_id]
+            M3[Circuit<br/>id, nom, nb_tours, temps_moyen]
+        end
+        
+        subgraph "Entités Mémoire"
+            M4[Course<br/>Simulation temps réel]
+        end
+    end
+    
+    subgraph "💾 COUCHE PERSISTANCE"
+        DAO1[PiloteDAO<br/>CRUD Pilotes]
+        DAO2[VoitureDAO<br/>CRUD Voitures]
+        DAO3[CircuitDAO<br/>CRUD Circuits]
+        
+        subgraph "Base de Données MySQL"
+            DB[(Database F1<br/>3 tables)]
+        end
+    end
+    
+    %% Flux de données descendant
+    UI1 --> CTRL
+    UI2 --> CTRL
+    UI3 --> CTRL
+    UI4 --> CTRL
+    D1 --> CTRL
+    D2 --> CTRL
+    D3 --> CTRL
+    
+    CTRL --> S1
+    CTRL --> S2
+    CTRL --> S3
+    CTRL --> S4
+    
+    S1 --> M1
+    S2 --> M2
+    S3 --> M4
+    S4 --> M3
+    
+    S1 --> DAO1
+    S2 --> DAO2
+    S4 --> DAO3
+    
+    DAO1 --> DB
+    DAO2 --> DB
+    DAO3 --> DB
+    
+    %% Relations entre entités
+    M1 -.-> M2
+    M3 -.-> M4
+    
+    %% Styles
+    classDef presentation fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef controller fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef service fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef model fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef dao fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef database fill:#f1f8e9,stroke:#8bc34a,stroke-width:3px
+    
+    class UI1,UI2,UI3,UI4,D1,D2,D3 presentation
+    class CTRL controller
+    class S1,S2,S3,S4 service
+    class M1,M2,M3,M4 model
+    class DAO1,DAO2,DAO3 dao
+    class DB db

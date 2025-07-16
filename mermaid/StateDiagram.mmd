@@ -1,9 +1,50 @@
 stateDiagram-v2
-    [*] --> Prete
-    Prete --> EnCours : démarrer()
-    EnCours --> ArretStand : arretAuStand()
-    ArretStand --> EnCours : repart()
-    EnCours --> Abandon : abandonPilote()
-    EnCours --> Terminee : courseFinie()
-    Abandon --> EnCours : autres pilotes roulent
-    Terminee --> [*] 
+    %% États des Pilotes
+    state "États des Pilotes" as PiloteStates {
+        [*] --> Garage
+        Garage --> Piste : sortirDesStands()
+        Piste --> Stands : rentrerAuxStands() / arrêt au stand
+        Stands --> Piste : sortirDesStands() / retour sur piste
+        Piste --> Abandon : abandonner()
+        Stands --> Abandon : abandonner()
+        Abandon --> [*]
+    }
+    
+    %% États des Courses
+    state "États des Courses" as CourseStates {
+        [*] --> Aucune
+        Aucune --> Configuree : configurerCourse()
+        Configuree --> EnCours : demarrerCourse()
+        EnCours --> Terminee : terminerCourse() / arrêt manuel
+        EnCours --> Terminee : tous les tours terminés
+        Terminee --> [*]
+        Terminee --> Configuree : nouvelle course
+    }
+    
+    %% États des Voitures
+    state "États des Voitures" as VoitureStates {
+        [*] --> VGarage
+        VGarage --> Stands : sortirDuGarage()
+        Stands --> Circuit : sortirDesStands()
+        Circuit --> Stands : rentrerAuxStands() / changement pneus
+        Stands --> Circuit : sortirDesStands() / retour circuit
+        Circuit --> VGarage : rentrerAuGarage() / abandon
+        Stands --> VGarage : rentrerAuGarage() / abandon
+        VGarage --> [*]
+    }
+    
+    %% Interactions entre les états
+    note right of PiloteStates
+        Les pilotes peuvent changer d'état
+        via l'interface graphique :
+        - Bouton "Arrêt au stand"
+        - Bouton "Abandon"
+        - Dialogue de changement de pneus
+    end note
+    
+    note right of CourseStates
+        Les courses sont gérées via :
+        - Menu "Démarrer une Course"
+        - Menu "Arrêter la Course"
+        - Suivi en temps réel
+    end note 

@@ -119,7 +119,7 @@ table.setItems(FXCollections.observableArrayList(controller.getPilotesList()));
 
 ### 5. `util/` : Utilitaires
 
-- `Logger.java`, `Utils.java`, `Constants.java` : fonctions d'aide, constantes, logs, etc.
+- `Utils.java`, `Constants.java` : fonctions d'aide, constantes, etc.
 
 ---
 
@@ -180,5 +180,3 @@ table.setItems(FXCollections.observableArrayList(controller.getPilotesList()));
 - **Le code est structuré de façon professionnelle** : séparation claire des responsabilités, MVC, services, exceptions, utilitaires.
 
 ---
-
-Si tu veux un focus sur un fichier précis, une explication détaillée d'une classe, ou un schéma UML, demande-le !

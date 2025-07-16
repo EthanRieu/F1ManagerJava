@@ -1,12 +1,46 @@
 sequenceDiagram
-    participant UI
-    participant Controller
-    participant Service
-    participant Model
+    participant User as Utilisateur
+    participant UI as CourseMenu
+    participant Dialog as DemarrerCourseDialog
+    participant Controller as ApplicationController
+    participant CourseService as CourseService
+    participant PiloteService as PiloteService
+    participant Model as Course
+    participant Circuit as Circuit
 
-    UI->>Controller: demande démarrage course
-    Controller->>Service: configurerCourse(...)
-    Service->>Model: new Course(...)
-    Model-->>Service: Course créée
-    Service-->>Controller: Course prête
-    Controller-->>UI: Afficher suivi de course 
+    %% Processus de démarrage d'une course via l'interface graphique
+    User->>UI: Clique "Démarrer une Course"
+    UI->>Dialog: Affiche dialogue configuration
+    Dialog->>User: Demande sélection circuit
+    User->>Dialog: Sélectionne circuit
+    User->>Dialog: Clique "Valider"
+    
+    Dialog->>Controller: demarrerCourse(nomCircuit, nbTours, dureeTour)
+    Controller->>Controller: Vérifie pilotes sans voiture
+    Controller->>CourseService: configurerCourse(circuit)
+    CourseService->>Model: new Course(circuit)
+    Model->>Circuit: Initialise circuit
+    Circuit-->>Model: Circuit configuré
+    Model-->>CourseService: Course créée
+    
+    Controller->>PiloteService: obtenirTousLesPilotes()
+    PiloteService-->>Controller: Liste des pilotes
+    Controller->>Controller: Filtre pilotes avec voiture
+    
+    loop Pour chaque pilote avec voiture
+        Controller->>CourseService: ajouterPiloteACourse(numero)
+        CourseService->>Model: ajouterPilote(pilote)
+        Model->>Model: Crée VoitureF1 pour pilote
+        Model-->>CourseService: Pilote ajouté
+    end
+    
+    Controller->>CourseService: demarrerCourse()
+    CourseService->>Model: demarrerCourse()
+    Model->>Model: courseDemarree = true
+    Model->>Model: Initialise chrono et simulation
+    Model-->>CourseService: Course démarrée
+    
+    CourseService-->>Controller: Succès
+    Controller-->>UI: Course démarrée
+    UI->>UI: Affiche vue de suivi en temps réel
+    UI->>UI: Lance rafraîchissement automatique (Timeline) 

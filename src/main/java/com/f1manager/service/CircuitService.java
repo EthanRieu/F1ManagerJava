@@ -85,35 +85,4 @@ public class CircuitService {
     public boolean circuitExiste(String nom) {
         return circuitDAO.existsByNom(nom);
     }
-
-    public int getNombreCircuits() {
-        return circuitDAO.findAll().size();
-    }
-
-    public void afficherTousLesCircuits() {
-        List<Circuit> circuits = circuitDAO.findAll();
-
-        if (circuits.isEmpty()) {
-            System.out.println("ℹ️ Aucun circuit enregistré.");
-            return;
-        }
-
-        System.out.println("\n🏁 Liste des circuits :");
-        System.out.println("─".repeat(70));
-        System.out.printf("%-4s %-20s %-10s %-15s %-15s%n",
-                "ID", "Nom", "Tours", "Temps/Tour", "Durée totale");
-        System.out.println("─".repeat(70));
-
-        for (Circuit circuit : circuits) {
-            System.out.printf("%-4d %-20s %-10d %-15s %-15s%n",
-                    circuit.getId(),
-                    circuit.getNom(),
-                    circuit.getNombreTours(),
-                    circuit.getTempsMoyenFormate(),
-                    circuit.getDureeTotaleFormatee());
-        }
-
-        System.out.println("─".repeat(70));
-        System.out.println("🏁 Total : " + circuits.size() + " circuits");
-    }
 }
