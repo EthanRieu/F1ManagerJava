@@ -134,6 +134,8 @@ table.setItems(FXCollections.observableArrayList(controller.getPilotesList()));
 - **Maven** gère la compilation, les dépendances (ex : JavaFX), les tests, la génération du JAR.
 - `src/main/java` → compilé dans `target/classes`.
 - `pom.xml` (non affiché ici) : décrit les dépendances (JavaFX, JUnit, etc.), la version Java, les plugins.
+- Pour compiler le projet : `mvn compile`
+- Pour lancer le projet : `mvn javafx:run`
 
 ---
 
