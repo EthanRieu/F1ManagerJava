@@ -4,17 +4,22 @@
 
 ```
 EvalFinaleJava2/
+├──database/
+│  └──create_db.sql 
 ├── src/
 │   └── main/
 │       └── java/
-│           └── com/
-│               └── f1manager/
-│                   ├── controller/
-│                   ├── model/
-│                   ├── service/
-│                   ├── ui/
-│                   ├── util/
-│                   └── exception/
+│       │    └── com/
+│       │        └── f1manager/
+│       │            ├── controller/
+│       │            ├── database/
+│       │            ├── model/
+│       │            ├── service/
+│       │            ├── ui/
+│       │            ├── util/
+│       │            └── exception/
+│       └── resources/
+│           └──database_config.properties            
 └── target/ (généré)
 ```
 
